@@ -28,7 +28,7 @@ For instance, `num_learners` is used to control how many weak learners are used 
 `batch_size` needs to be 1, which indicates one query per batch or we put say all query-document features and labels that belong to the same query in the same batch.
 
 # uRank
-Set `num_learners` to 1.
+Set `num_learners` to 1. Change the GPU number accordingly.
 
 ```bash
 ./run_OHSUMED_uRank.sh
@@ -61,7 +61,7 @@ Set a system variable `LIGHTGBM_DATA` that stores the folder that contains the L
 Convert the raw learning-to-rank data sets to LightGBM inputs.
 
 ```bash
-msltr2libsvm.py
+python msltr2libsvm.py
 ```
 
 Replace the rank_objective.hpp in this repo with the same file in LightGBM and compile

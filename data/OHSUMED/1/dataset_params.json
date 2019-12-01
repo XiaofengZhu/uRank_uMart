@@ -1,0 +1,9 @@
+{
+    "feature_dim": 45.0,
+    "train_size": 62.0,
+    "train_doc_count": 9177.0,
+    "eval_size": 21.0,
+    "eval_doc_count": 3538.0,
+    "test_size": 22.0,
+    "test_doc_count": 3383.0
+}

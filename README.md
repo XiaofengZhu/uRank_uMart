@@ -1,7 +1,7 @@
 # uRank_uMart
 Listwise Learning to Rank by Exploring Unique Ratings (accepted at ICDM 2020)
 
-## configuration
+## Configuration
 Set a system variable `RAW_RANK_DATA` that stores the folder that contains the raw ranking data
 
 Set a system variable `TF_RANK_DATA` that stores the folder that contains the serialized ranking data
@@ -27,28 +27,28 @@ For instance, `num_learners` is used to control how many weak learners are used 
 
 `batch_size` needs to be 1, which indicates one query per batch or we put say all query-document features and labels that belong to the same query in the same batch.
 
-# uRank
+## uRank
 Set `num_learners` to 1. Change the GPU number accordingly.
 
 ```bash
 ./run_OHSUMED_uRank.sh
 ```
 
-# uBoost
+## uBoost
 Set `num_learners` to an integer larger than 1.
 
 ```bash
 ./run_OHSUMED_uRank.sh
 ```
 
-# urRank
+## urRank
 This model was not mentioned in the paper. It is uRank + RNN without boosting.
 
 ```bash
 ./run_OHSUMED_urRank.sh
 ```
 
-# urBoost
+## urBoost
 Set `num_learners` to an integer larger than 1.
 
 ```bash

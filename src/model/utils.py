@@ -75,3 +75,37 @@ def save_dict_to_json(d, json_path):
         # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
         d = {k: float(v) for k, v in d.items()}
         json.dump(d, f, indent=4)
+
+def save_predictions_to_file(l, prediction_output_path):
+    """Saves list of floats in txt file
+
+    Args:
+        l: (list) of float-castable values (np.float, int, float, etc.)
+        prediction_output_path: (string) path to txt file
+    """
+    with open(prediction_output_path, 'w') as f:
+        for v in l:
+            f.write(str(v) + '\n')
+            f.flush()
+
+def load_best_ndcgs(json_path):
+    """Saves dict of floats in json file
+
+    Args:
+        d: (dict) of float-castable values (np.float, int, float, etc.)
+        json_path: (string) path to json file
+    """
+    with open(json_path, 'r') as f:
+        # We need to convert the values to float for json (it doesn't accept np.array, np.float, )
+        data = json.load(f)
+        return list(data.values())
+
+def get_expaned_metrics(metrics_val, top_ks):
+    expanded_metrics_val = {}
+    for tag, val in metrics_val.items():
+        if tag == 'ndcg':
+            for i in range(len(val)):
+                expanded_metrics_val['{}_{}'.format(tag, top_ks[i])] = val[i][0]
+        else:
+            expanded_metrics_val[tag] = val
+    return expanded_metrics_val

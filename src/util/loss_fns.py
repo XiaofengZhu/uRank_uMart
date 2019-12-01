@@ -2,6 +2,29 @@ import tensorflow as tf
 from util import masks, math_fns
 
 
+def get_equal_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
+                  params=None):
+  """
+  Paiwise learning-to-rank ranknet loss
+  Check paper https://www.microsoft.com/en-us/research/publication/
+  learning-to-rank-using-gradient-descent/
+  for more information
+  Args:
+    pairwise_label_scores: a dense tensor of shape [n_data, n_data]
+    pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
+    n_data is the number of tweet candidates in a BatchPredictionRequest
+    params: network parameters
+  mask options: full_mask and diag_mask
+  Returns:
+    average loss over pairs defined by the masks
+  """
+  mask, pair_count = masks.equal_mask(pairwise_label_scores)
+  # pairwise sigmoid_cross_entropy_with_logits loss
+  loss = tf.cond(tf.equal(pair_count, 0), lambda: 0.,
+    lambda: _get_average_cross_entropy_loss(pairwise_label_scores,
+      pairwise_predicted_scores, mask, pair_count))
+  return loss
+
 def get_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
                   params):
   """
@@ -192,7 +215,7 @@ def _get_attentions(raw_scores):
 
   expon_label_sum = tf.reduce_sum(expon_labels)
   # expon_label_sum is safe as a denominator
-  attentions = math_fns.safe_div(expon_labels, expon_label_sum)
+  attentions = math_fns.safe_div_zero(expon_labels, expon_label_sum)
   return attentions
 
 

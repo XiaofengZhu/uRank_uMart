@@ -30,7 +30,7 @@ def ndcg(labels, predictions,
                   metrics_collections=None,
                   updates_collections=None,
                   name=None,
-                  top_k_int=1,
+                  top_ks=[1, 3, 5, 10],
                   use_predicted_order=False):
   # pylint: disable=unused-argument
   """
@@ -55,36 +55,37 @@ def ndcg(labels, predictions,
     ndcg: A `Tensor` representing the ndcg score.
     update_op: A update operation used to accumulate data into this metric.
   """
-  with tf.variable_scope(name, 'ndcg', (labels, predictions)):
-    label_scores = tf.to_float(labels, name='label_to_float')
+  with tf.variable_scope(name, 'ndcgs', (labels, predictions)):
+    label_scores = tf.to_float(labels, name='labels_to_float')
     predicted_scores = tf.to_float(predictions, name='predictions_to_float')
 
-    total_ndcg = _metric_variable([], dtypes.float32, name='total_ndcg')
+    total_ndcgs = _metric_variable([len(top_ks), 1], dtypes.float32, name='total_ndcgs')
     count_query = _metric_variable([], dtypes.float32, name='query_count')
-
-    # actual ndcg cutoff position top_k_int
-    max_prediction_size = array_ops.size(predicted_scores)
-    top_k_int = tf.minimum(max_prediction_size, top_k_int)
+    #-------------------------------------------------------------------------------->
+    # # actual ndcg cutoff position top_k_int
+    # max_prediction_size = array_ops.size(predicted_scores)
+    # top_k_int = tf.minimum(max_prediction_size, top_k_int)
     # the ndcg score of the batch
-    ndcg = math_fns.cal_ndcg(label_scores,
-      predicted_scores, top_k_int=top_k_int, use_predicted_order=use_predicted_order)
-    # add ndcg of the current batch to total_ndcg
-    update_total_op = state_ops.assign_add(total_ndcg, ndcg)
-    with ops.control_dependencies([ndcg]):
+    ndcgs = math_fns.cal_ndcg(label_scores,
+      predicted_scores, top_ks=top_ks, use_predicted_order=use_predicted_order)
+    #<--------------------------------------------------------------------------------
+    # add ndcg of the current batch to total_ndcgs
+    update_total_op = state_ops.assign_add(total_ndcgs, ndcgs)
+    with ops.control_dependencies([ndcgs]):
       # count_query stores the number of queries
       # count_query increases by 1 for each batch/query
       update_count_op = state_ops.assign_add(count_query, 1)
 
-    mean_ndcg = math_fns.safe_div(total_ndcg, count_query, 'mean_ndcg')
+    mean_ndcgs = math_fns.safe_div(total_ndcgs, count_query, 'mean_ndcgs')
     update_op = math_fns.safe_div(update_total_op, update_count_op, 'update_mean_ndcg_op')
 
     if metrics_collections:
-      ops.add_to_collections(metrics_collections, mean_ndcg)
+      ops.add_to_collections(metrics_collections, mean_ndcgs)
 
     if updates_collections:
       ops.add_to_collections(updates_collections, update_op)
 
-    return mean_ndcg, update_op
+    return mean_ndcgs, update_op
 
 
 def dcg(labels, predictions,
@@ -363,29 +364,30 @@ def get_search_metric_fn(labels, predictions,
     if search_metric_factory:
       if metric_name == 'ndcg':
         if use_ndcg_metrics == True:
-          for top_k in ndcg_top_ks:
-            # metric name will show as ndcg_1, ndcg_10, ...
-            metric_name_ndcg_top_k = metric_name + '_' + str(top_k)
-            top_k_int = tf.constant(top_k, dtype=tf.int32)
-            # # Note: having weights in ndcg does not make much sense
-            # # Because ndcg already has position weights/discounts
-            # # Thus weights are not applied in ndcg metric
-            value_op, update_op = search_metric_factory(
-              labels=labels,
-              predictions=predictions,
-              name=metric_name_ndcg_top_k,
-              top_k_int=top_k_int,
-              use_predicted_order=use_predicted_order)
-            eval_metric_ops[metric_name_ndcg_top_k] = (value_op, update_op)
+          # for top_k in ndcg_top_ks:
+          metric_name_ndcg_top_k = metric_name
+          # metric name will show as ndcg_1, ndcg_10, ...
+          # metric_name_ndcg_top_k = metric_name + '_' + str(top_k)
+          # top_k_int = tf.constant(top_k, dtype=tf.int32)
+          # # Note: having weights in ndcg does not make much sense
+          # # Because ndcg already has position weights/discounts
+          # # Thus weights are not applied in ndcg metric
+          value_op, update_op = search_metric_factory(
+            labels=labels,
+            predictions=predictions,
+            name=metric_name_ndcg_top_k,
+            top_ks=ndcg_top_ks,
+            use_predicted_order=use_predicted_order)
+          eval_metric_ops[metric_name_ndcg_top_k] = (value_op, update_op)
       elif metric_name == 'err':
         if use_err_metric == True:
           for top_k in ndcg_top_ks:
             # metric name will show as err_1, err_10, ...
             metric_name_err_top_k = metric_name + '_' + str(top_k)
             top_k_int = tf.constant(top_k, dtype=tf.int32)
-            # # Note: having weights in ndcg does not make much sense
-            # # Because ndcg already has position weights/discounts
-            # # Thus weights are not applied in ndcg metric
+            # # Note: having weights in err does not make much sense
+            # # Because err already has position weights/discounts
+            # # Thus weights are not applied in err metric
             value_op, update_op = search_metric_factory(
               labels=labels,
               predictions=predictions,

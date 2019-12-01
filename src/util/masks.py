@@ -12,7 +12,6 @@ def diag_mask(pairwise_label_scores):
 	pair_count = tf.reduce_sum(masks)
 	return masks, pair_count
 
-
 def full_mask(pairwise_label_scores):
 	masks = tf.ones(tf.shape(pairwise_label_scores))
     # line 19 == line 20
@@ -23,7 +22,6 @@ def full_mask(pairwise_label_scores):
 	masks = tf.cast(masks, dtype=tf.float32)
 	pair_count = tf.reduce_sum(masks)
 	return masks, pair_count
-
 
 def pruned_mask(pairwise_label_scores):
     #    0   1   2
@@ -40,7 +38,6 @@ def pruned_mask(pairwise_label_scores):
     pair_count = tf.reduce_sum(masks)
     return masks, pair_count
 
-
 def equal_mask(pairwise_label_scores):
     masks = tf.equal(pairwise_label_scores, 0)
     masks = tf.cast(masks, dtype=tf.float32)
@@ -55,4 +52,12 @@ def list_mask(raw_pairwise_label_scores):
     not_consider = tf.cast(not_consider, tf.float32)
     masks = tf.subtract(masks, not_consider)
     masks = tf.cast(masks, dtype=tf.float32)
+    return masks
+
+def list_negative_mask(raw_pairwise_label_scores):
+    masks = tf.ones(tf.shape(raw_pairwise_label_scores))
+    not_consider = tf.greater_equal(raw_pairwise_label_scores, 0.0)
+    not_consider = tf.cast(not_consider, tf.float32)
+    masks = tf.subtract(masks, not_consider)
+    masks = -tf.cast(masks, dtype=tf.float32)
     return masks

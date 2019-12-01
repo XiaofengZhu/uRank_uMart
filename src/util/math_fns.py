@@ -2,10 +2,10 @@ import tensorflow as tf
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import math_ops
 
-
 def safe_div(numerator, denominator, name='safe_div'):
   """Computes a safe divide which returns 0 if the denominator is zero.
-
+  This can be used for calculating ndcg with corner case of all candidate
+  documents having ratings 0.
   Args:
     numerator: An arbitrary `Tensor`.
     denominator: `Tensor` whose shape matches `numerator`.
@@ -20,7 +20,7 @@ def safe_div(numerator, denominator, name='safe_div'):
       math_ops.div(numerator, denominator),
       name=name)
 
-def cal_ndcg(label_scores, predicted_scores, top_k_int=1, use_predicted_order=False):
+def cal_ndcg(label_scores, predicted_scores, top_ks=[1, 3, 5, 10], use_predicted_order=False):
   """
   Calculate NDCG score for top_k_int ranking positions
   Args:
@@ -30,21 +30,31 @@ def cal_ndcg(label_scores, predicted_scores, top_k_int=1, use_predicted_order=Fa
   Returns:
     a `Tensor` that holds DCG / IDCG.
   """
+  max_prediction_size = array_ops.size(predicted_scores)
+  max_top_k = max(top_ks)
+  max_top_k = tf.minimum(max_prediction_size, max_top_k)
+
   sorted_labels, predicted_order, sorted_predictions = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int, use_predicted_order=use_predicted_order)
+    label_scores, predicted_scores, top_k_int=max_top_k, use_predicted_order=use_predicted_order)
 
   predicted_relevance = _get_relevance_scores(predicted_order)
   sorted_relevance = _get_relevance_scores(sorted_labels)
 
-  cg_discount = _get_cg_discount(top_k_int)
-
-  dcg = _dcg_idcg(predicted_relevance, cg_discount)
-  idcg = _dcg_idcg(sorted_relevance, cg_discount)
-  # the ndcg score of the batch
+  cg_discounts = _get_cg_discount(max_top_k)
+  dcgs = predicted_relevance / cg_discounts
+  idcgs = sorted_relevance / cg_discounts
+  cumsum_dcgs = tf.cumsum(dcgs, exclusive=False)
+  cumsum_idcgs = tf.cumsum(idcgs, exclusive=False)
   # idcg is 0 if label_scores are all 0
-  ndcg = safe_div(dcg, idcg, 'one_ndcg')
-  return ndcg
-
+  ndcgs = safe_div(cumsum_dcgs, cumsum_idcgs, 'ndcgs')
+  k_indices = [tf.minimum(max_prediction_size, v) - 1 for v in top_ks]
+  k_ndcgs = tf.gather(ndcgs, k_indices)
+  # dcg = _dcg_idcg(predicted_relevance, cg_discount)
+  # idcg = _dcg_idcg(sorted_relevance, cg_discount)
+  # the ndcg score of the batch
+  # # idcg is 0 if label_scores are all 0
+  # ndcg = safe_div(dcg, idcg, 'one_ndcg')
+  return k_ndcgs
 
 def cal_swapped_ndcg(label_scores, predicted_scores, top_k_int):
   """
@@ -88,6 +98,9 @@ def cal_swapped_ndcg(label_scores, predicted_scores, top_k_int):
   swapped_ndcg = tf.abs(ndcg - new_ndcg)
   return swapped_ndcg
 
+def diff_idcg_dcg(label_scores, predicted_scores, top_k_int):
+  return cal_idcg(label_scores, predicted_scores, top_k_int) - \
+  cal_dcg(label_scores, predicted_scores, top_k_int)
 
 def cal_idcg(label_scores, predicted_scores, top_k_int):
   """
@@ -99,12 +112,15 @@ def cal_idcg(label_scores, predicted_scores, top_k_int):
   Returns:
     a `Tensor` that holds swapped NDCG by .
   """
+  max_prediction_size = array_ops.size(predicted_scores)
+  max_top_k = tf.minimum(max_prediction_size, top_k_int)
+
   sorted_labels, predicted_order, sorted_predictions = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int)
+    label_scores, predicted_scores, top_k_int=max_top_k)
 
   sorted_relevance = _get_relevance_scores(sorted_labels)
 
-  cg_discount = _get_cg_discount(top_k_int)
+  cg_discount = _get_cg_discount(max_top_k)
 
   # cg_discount is safe as a denominator
   idcg_ks = sorted_relevance / cg_discount
@@ -201,7 +217,7 @@ def cal_err(label_scores, predicted_scores, top_k_int=1, use_predicted_order=Fal
     max_label_score = tf.reduce_max(label_scores)
 
   predicted_relevance = _get_relevance_scores(predicted_order)
-  predicted_relevance_ratio = predicted_relevance / 2**max_label_score
+  predicted_relevance_ratio = predicted_relevance / (2**max_label_score)
   _ratio = 1- predicted_relevance_ratio
   prob_stepdown = tf.cumprod(_ratio, exclusive=True)
   cur_rank = tf.range(top_k_int) + 1

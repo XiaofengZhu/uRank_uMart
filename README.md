@@ -80,3 +80,5 @@ We fixed the logic and added ERR calculation based on the perl script (see mslr-
 We also implemented ranknet, listnet, listmle in this repo, however, it might not as efficient as TF-Ranking https://github.com/tensorflow/ranking.
 
 Please kindly cite our work if you would like to use our code.
+
+Xiaofeng Zhu and Diego Klabjan. 2020. Listwise Learning to Rank by Explor-ing Unique Ratings. InThe Thirteenth ACM International Conference on WebSearch and Data Mining (WSDM ’20), February 3–7, 2020, Houston, TX, USA.WSDM, Houston, TX, USA.

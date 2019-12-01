@@ -1,0 +1,23 @@
+{
+    "learning_rate": 1e-5,
+    "batch_size": 1,
+    "num_epochs": 1000,
+    "buffer_size": 1,
+    "save_summary_steps": 100,
+    "early_stoping_steps": 200,
+    "gradient_clip_value": 5,
+    "mlp_size_1": 100,
+    "mlp_size_2": 100,
+    "rnn_state_size": 100,
+    "pooling": "MP",
+    "rnn": "C2",
+  
+    "top_k": 10,
+    "pre_training": 0,
+    "use_regularization": 0,
+    "dropout_rate": 0.3,
+    "decay_size": 126,
+    "decay_rate": 0.9, 
+    "mask": "diag_mask",
+    "exploration": 0.7        
+}

@@ -64,7 +64,7 @@ Convert the raw learning-to-rank data sets to LightGBM inputs.
 python msltr2libsvm.py
 ```
 
-Replace the rank_objective.hpp in this repo with the same file in LightGBM and compile
+Replace the rank_objective.hpp in this repo with the same file in LightGBM (https://github.com/microsoft/LightGBM) and compile to obtain the binary for training uMart.
 
 ## Notice
 Please keep in mind that the default NDCG calculation in LightGBM takes queries with all 0 labels as NDCG any position 1, i.e., NDCG@1=1,  NDCG@3=1, NDCG@5=1, NDCG@10=1. 
@@ -77,8 +77,9 @@ We remove queries with all 0 labels from all of the data sets to avoid this conf
 
 We fixed the logic and added ERR calculation based on the perl script (see mslr-eval-score-mslr.pl).
 
-We also implemented ranknet, listnet, listmle in this repo, however, it might not as efficient as TF-Ranking https://github.com/tensorflow/ranking.
+We also implemented ranknet, listnet, listmle in this repo, however, it might not as efficient as TF-Ranking https://github.com/tensorflow/ranking. Other implementations can be found at https://github.com/microsoft/LightGBM and https://sourceforge.net/p/lemur/wiki/RankLib/.
 
+## Citation
 Please kindly cite our work if you would like to use our code.
 
 Xiaofeng Zhu and Diego Klabjan. 2020. Listwise Learning to Rank by Explor-ing Unique Ratings. InThe Thirteenth ACM International Conference on WebSearch and Data Mining (WSDM ’20), February 3–7, 2020, Houston, TX, USA.WSDM, Houston, TX, USA.

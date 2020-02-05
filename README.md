@@ -1,5 +1,5 @@
 # uRank_uMart
-Listwise Learning to Rank by Exploring Unique Ratings (accepted at ICDM 2020)
+Listwise Learning to Rank by Exploring Unique Ratings (accepted at WSDM 2020)
 
 ## Configuration
 Set a system variable `RAW_RANK_DATA` that stores the folder that contains the raw ranking data

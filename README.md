@@ -6,13 +6,14 @@ Set a system variable `RAW_RANK_DATA` that stores the folder that contains the r
 
 Set a system variable `TF_RANK_DATA` that stores the folder that contains the serialized ranking data
 
-Convert raw ranking data to tf records (THIS IS AN IMPORTANT STEPS)
+Convert raw ranking data to tf records (THIS IS AN IMPORTANT STEP)
 ```bash
 python prepare_data.py
 ```
 
 Your `TF_RANK_DATA` should now contain the serialized tf records for running the experiments.
 
+You will see the batch size being 1, meaning one serialized query per batch. The actual batch size the number of documents per query.
 
 Thanks to suggestions from WSDM attendants. An engineering side improvement could be accumulating the loss every a few batches to receive more smooth gradient updates.
 

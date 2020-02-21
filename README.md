@@ -86,4 +86,19 @@ We also implemented ranknet, listnet, listmle in this repo, however, it might no
 ## Citation
 Please kindly cite our work if you would like to use our code.
 
-Xiaofeng Zhu and Diego Klabjan. 2020. Listwise Learning to Rank by Explor-ing Unique Ratings. InThe Thirteenth ACM International Conference on WebSearch and Data Mining (WSDM ’20), February 3–7, 2020, Houston, TX, USA.WSDM, Houston, TX, USA.
+@inproceedings{10.1145/3336191.3371814,
+author = {Zhu, Xiaofeng and Klabjan, Diego},
+title = {Listwise Learning to Rank by Exploring Unique Ratings},
+year = {2020},
+isbn = {9781450368223},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3336191.3371814},
+doi = {10.1145/3336191.3371814},
+booktitle = {Proceedings of the 13th International Conference on Web Search and Data Mining},
+pages = {798–806},
+numpages = {9},
+keywords = {listwise learning to rank, learning to rank, deep learning, recurrent neural network},
+location = {Houston, TX, USA},
+series = {WSDM ’20}
+}

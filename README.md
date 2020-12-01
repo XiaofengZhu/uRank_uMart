@@ -81,7 +81,7 @@ We remove queries with all 0 labels from all of the data sets to avoid this conf
 
 We fixed the logic and added ERR calculation based on the perl script (see mslr-eval-score-mslr.pl).
 
-We also implemented ranknet, listnet, listmle in this repo, however, it might not as efficient as TF-Ranking https://github.com/tensorflow/ranking. Other implementations can be found at https://github.com/microsoft/LightGBM and https://sourceforge.net/p/lemur/wiki/RankLib/.
+We also implemented ranknet, listnet, listmle in this repo, however, it might not be as efficient as in TF-Ranking https://github.com/tensorflow/ranking. Other implementations can be found at https://github.com/microsoft/LightGBM and https://sourceforge.net/p/lemur/wiki/RankLib/.
 
 ## Citation
 Please kindly cite our work if you would like to use our code.

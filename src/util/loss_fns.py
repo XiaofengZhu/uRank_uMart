@@ -12,7 +12,7 @@ def get_equal_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
   Args:
     pairwise_label_scores: a dense tensor of shape [n_data, n_data]
     pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     params: network parameters
   mask options: full_mask and diag_mask
   Returns:
@@ -35,7 +35,7 @@ def get_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
   Args:
     pairwise_label_scores: a dense tensor of shape [n_data, n_data]
     pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     params: network parameters
   mask options: full_mask and diag_mask
   Returns:
@@ -72,7 +72,7 @@ def get_lambda_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
   Args:
     pairwise_label_scores: a dense tensor of shape [n_data, n_data]
     pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     params: network parameters
     swapped_ndcg: swapped ndcg of shape [n_data, n_data]
     ndcg values when swapping each pair in the prediction ranking order
@@ -120,7 +120,7 @@ def get_listmle_loss(labels, predicted_scores):
   Check paper http://icml2008.cs.helsinki.fi/papers/167.pdf for more information
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
   Returns:
     average loss
@@ -185,7 +185,7 @@ def get_attrank_loss(labels, predicted_scores, weights=None):
   their public code
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
     weights: a dense tensor of the same shape as labels
   Returns:
@@ -236,7 +236,7 @@ def get_listnet_loss(labels, predicted_scores, weights=None):
   for more information
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
     weights: a dense tensor of the same shape as labels
   Returns:
@@ -295,7 +295,7 @@ def get_pointwise_loss(labels, predicted_scores, weights=None):
   Pointwise learning-to-rank pointwise loss
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
     weights: a dense tensor of the same shape as labels
   Returns:
@@ -333,7 +333,7 @@ def get_hinge_loss(pairwise_label_scores, pairwise_predicted_scores,
   Args:
     pairwise_label_scores: a dense tensor of shape [n_data, n_data]
     pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     params: network parameters
   mask options: full_mask and diag_mask
   Returns:
@@ -362,7 +362,7 @@ def get_mdprank_loss(labels, predicted_scores):
   Check paper http://icml2008.cs.helsinki.fi/papers/167.pdf for more information
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
+    n_data is the number of candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
   Returns:
     average loss
